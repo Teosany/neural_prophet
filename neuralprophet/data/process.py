@@ -76,7 +76,7 @@ def _reshape_raw_predictions_to_forecst_df(
             forecast = predicted[:, forecast_lag - 1, j]
             pad_before = max_lags + forecast_lag - 1
             pad_after = n_forecasts - forecast_lag
-            yhat = np.pad(forecast, (pad_before, pad_after), mode="constant", constant_values=np.NaN)
+            yhat = np.pad(forecast, (pad_before, pad_after), mode="constant", constant_values=np.nan)
             if prediction_frequency is not None:
                 ds = df_forecast["ds"].iloc[pad_before : -pad_after if pad_after > 0 else None]
                 mask = df_utils.create_mask_for_prediction_frequency(
@@ -86,7 +86,7 @@ def _reshape_raw_predictions_to_forecst_df(
                 )
                 yhat = np.full((len(ds),), np.nan)
                 yhat[mask] = forecast
-                yhat = np.pad(yhat, (pad_before, pad_after), mode="constant", constant_values=np.NaN)
+                yhat = np.pad(yhat, (pad_before, pad_after), mode="constant", constant_values=np.nan)
             # 0 is the median quantile index
             if j == 0:
                 name = f"yhat{forecast_lag}"
@@ -111,7 +111,7 @@ def _reshape_raw_predictions_to_forecst_df(
                     forecast = components[comp][:, forecast_lag - 1, j]  # 0 is the median quantile
                     pad_before = max_lags + forecast_lag - 1
                     pad_after = n_forecasts - forecast_lag
-                    yhat = np.pad(forecast, (pad_before, pad_after), mode="constant", constant_values=np.NaN)
+                    yhat = np.pad(forecast, (pad_before, pad_after), mode="constant", constant_values=np.nan)
                     if prediction_frequency is not None:
                         ds = df_forecast["ds"].iloc[pad_before : -pad_after if pad_after > 0 else None]
                         mask = df_utils.create_mask_for_prediction_frequency(
@@ -121,7 +121,7 @@ def _reshape_raw_predictions_to_forecst_df(
                         )
                         yhat = np.full((len(ds),), np.nan)
                         yhat[mask] = forecast
-                        yhat = np.pad(yhat, (pad_before, pad_after), mode="constant", constant_values=np.NaN)
+                        yhat = np.pad(yhat, (pad_before, pad_after), mode="constant", constant_values=np.nan)
                     if j == 0:  # temporary condition to add only the median component
                         name = f"{comp}{forecast_lag}"
                         df_forecast[name] = yhat
@@ -133,7 +133,7 @@ def _reshape_raw_predictions_to_forecst_df(
                 forecast_0 = components[comp][0, :, j]
                 forecast_rest = components[comp][1:, n_forecasts - 1, j]
                 yhat = np.pad(
-                    np.concatenate((forecast_0, forecast_rest)), (max_lags, 0), mode="constant", constant_values=np.NaN
+                    np.concatenate((forecast_0, forecast_rest)), (max_lags, 0), mode="constant", constant_values=np.nan
                 )
                 if prediction_frequency is not None:
                     date_list = []
@@ -493,7 +493,7 @@ def _handle_missing_data(
 
     if n_lags > 0:
         # add missig dates to df
-        df_grouped = df.groupby("ID").apply(lambda x: x.set_index("ds").resample(freq).asfreq()).drop(columns=["ID"])
+        df_grouped = df.groupby("ID").apply(lambda x: x.set_index("ds").resample(freq).asfreq()).drop(columns=["ID"], errors="ignore")
         n_missing_dates = len(df_grouped) - len(df)
         if n_missing_dates > 0:
             df = df_grouped.reset_index()
